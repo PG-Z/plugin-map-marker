@@ -9,7 +9,7 @@ spec:
     name: cat.7
     website: https://github.com/PG-Z
   logo: logo.png
-  homepage: https://github.com/halo-sigs/plugin-links
+  homepage: https://github.com/PG-Z/plugin-map-marker
   displayName: "地图标记"
   description: "在地图上标记文章"
   license:
