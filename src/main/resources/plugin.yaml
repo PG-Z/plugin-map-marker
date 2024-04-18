@@ -1,0 +1,18 @@
+apiVersion: plugin.halo.run/v1alpha1
+kind: Plugin
+metadata:
+  name: PluginMaps
+spec:
+  version: 1.0.0-Beta.1
+  requires: ">=2.10.0"
+  author:
+    name: cat.7
+    website: https://github.com/PG-Z
+  logo: logo.png
+  homepage: https://github.com/halo-sigs/plugin-links
+  displayName: "地图标记"
+  description: "在地图上标记文章"
+  license:
+    - name: "GPL-3.0"
+      url: "https://github.com/halo-sigs/plugin-links/blob/main/LICENSE"
+  enabled: true

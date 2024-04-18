@@ -1,0 +1,37 @@
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-map-marker-view
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Map Marker Management"
+    rbac.authorization.halo.run/display-name: "地图标记查看"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["plugin:maps:view"]
+rules:
+  - apiGroups: [ "map.aiheiyo.top" ]
+    resources: [ "maps", "mapgroups" ]
+    verbs: [ "get", "list" ]
+  - apiGroups: [ "api.plugin.aiheiyo.top" ]
+    resources: [ "plugins/maps" ]
+    resourceNames: [ "PluginMaps" ]
+    verbs: [ "get", "list" ]
+---
+apiVersion: v1alpha1
+kind: Role
+metadata:
+  name: role-template-map-marker-manage
+  labels:
+    halo.run/role-template: "true"
+  annotations:
+    rbac.authorization.halo.run/module: "Map Marker Management"
+    rbac.authorization.halo.run/display-name: "地图标记管理"
+    rbac.authorization.halo.run/ui-permissions: |
+      ["plugin:maps:manage"]
+    rbac.authorization.halo.run/dependencies: |
+      ["role-template-map-marker-view"]
+rules:
+  - apiGroups: [ "map.aiheiyo.top" ]
+    resources: [ "maps", "mapgroups" ]
+    verbs: [ "create", "patch", "update", "delete", "deletecollection" ]
