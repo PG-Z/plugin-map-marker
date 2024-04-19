@@ -1,4 +1,4 @@
-package top.aiheiyo.map;
+package top.aiheiyo.map.api;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
@@ -17,7 +17,10 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import run.halo.app.extension.ListResult;
 import run.halo.app.extension.ReactiveExtensionClient;
+import run.halo.app.plugin.ReactiveSettingFetcher;
+import top.aiheiyo.map.Map;
 import top.aiheiyo.map.finders.MapFinder;
+import top.aiheiyo.map.vo.MapConfig;
 import top.aiheiyo.map.vo.MapGroupVo;
 import top.aiheiyo.map.vo.MapQuery;
 
@@ -27,13 +30,15 @@ public class MapRouter {
 
     private final MapFinder mapFinder;
     private final ReactiveExtensionClient client;
+    private final ReactiveSettingFetcher settingFetcher;
+    
     private final String tag = "api.plugin.aiheiyo.top/v1alpha1/Link";
 
     @Bean
     RouterFunction<ServerResponse> mapTemplateRoute() {
         return route(GET("/maps"),
-                request -> ServerResponse.ok().render("maps",
-                        java.util.Map.of("groups", mapGroups())));
+                request -> ServerResponse.ok()
+                        .render("maps", java.util.Map.of("mapConfigs", configs())));
     }
 
     @Bean
@@ -76,5 +81,25 @@ public class MapRouter {
     private Mono<List<MapGroupVo>> mapGroups() {
         return mapFinder.groupBy()
                 .collectList();
+    }
+
+    private Mono<String> configs() {
+        return this.settingFetcher.get("mapbox").map(MapConfig::ofStr);
+/*
+        return Mono.just("""
+                {
+                    "api": "https://slykiten.com/wp-json/",
+                    "nonce": "4fcad5daf3",
+                    "launguagePACK": "https://cdn.aifeel.top/home/js/mapbox-gl-rtl-text.js",
+                    "zoom": "1",
+                    "maxZoom": "7",
+                    "minZoom": "1",
+                    "limit": "9",
+                    "center": [
+                        "128.14",
+                        "33.87"
+                    ],
+                    "token": "pk.eyJ1IjoiZmF0ZXNpbmdlciIsImEiOiJjanc4bXFocG8wMXM1NDNxanB0MG5sa2ZpIn0.HqA5Q8Y4Jp1s3_TQ-sqVoQ"
+                }""");*/
     }
 }

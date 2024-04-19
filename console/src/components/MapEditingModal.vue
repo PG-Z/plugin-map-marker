@@ -28,6 +28,7 @@ const initialFormState: Map = {
   },
   spec: {
     displayName: "",
+    post: "",
     url: "",
     logo: "",
     groupName: "",
@@ -157,14 +158,14 @@ const handleSaveLink = async () => {
             type="text"
             name="displayName"
             validation="required"
-            label="显示名称"
+            label="名称"
           ></FormKit>
           <FormKit
-            type="url"
-            name="url"
-            validation="required"
-            label="标记链接"
+            type="postSelect"
+            name="post"
+            label="文章"
           ></FormKit>
+          <FormKit type="url" name="url" label="链接"></FormKit>
           <FormKit type="attachment" name="logo" label="Logo"></FormKit>
           <FormKit type="textarea" name="description" label="描述"></FormKit>
         </div>

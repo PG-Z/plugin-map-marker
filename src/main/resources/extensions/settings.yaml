@@ -1,0 +1,49 @@
+apiVersion: v1alpha1
+kind: Setting
+metadata:
+  name: plugin-map-marker-settings
+spec:
+  forms:
+    - group: mapbox
+      label: 地图设置
+      formSchema:
+        - $formkit: text
+          label: Marker URL
+          name: api
+          validation: required
+          value: '/apis/api.plugin.halo.run/v1alpha1/plugins/PluginMaps/map/v1/mapFeature'
+        - $formkit: text
+          label: mapbox Token
+          name: token
+          validation: required
+          value: ''
+        - $formkit: text
+          label: 语言包
+          name: launguagePACK
+          validation: Not
+          value: ''
+        - $formkit: text
+          label: 中心点
+          name: center
+          validation: required
+          value: '128.14,33.87'
+        - $formkit: number
+          label: 默认缩放
+          name: zoom
+          validation: required
+          value: '3'
+        - $formkit: number
+          label: 最大缩放
+          name: maxZoom
+          validation: required
+          value: '7'
+        - $formkit: number
+          label: 最小缩放
+          name: minZoom
+          validation: required
+          value: '1'
+        - $formkit: number
+          label: Dataset
+          name: limit
+          validation: required
+          value: '9'

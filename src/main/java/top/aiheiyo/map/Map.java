@@ -27,6 +27,8 @@ public class Map extends AbstractExtension {
         @Schema(required = true)
         private String displayName;
 
+        private String post;
+
         private String logo;
 
         private String description;
@@ -34,5 +36,9 @@ public class Map extends AbstractExtension {
         private Integer priority;
 
         private String groupName;
+    }
+
+    public String groupName() {
+        return this.getSpec().getGroupName();
     }
 }

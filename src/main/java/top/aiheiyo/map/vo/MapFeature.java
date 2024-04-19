@@ -1,0 +1,151 @@
+package top.aiheiyo.map.vo;
+
+import com.google.common.collect.Lists;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import run.halo.app.infra.utils.JsonUtils;
+import top.aiheiyo.map.MapGroup;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+/**
+ * Description:
+ *
+ * @author : evan  Date: 2024/4/19
+ */
+@Slf4j
+@NoArgsConstructor
+@Data
+public class MapFeature implements Serializable {
+
+    private String type;
+    private List<FeaturesDTO> features;
+
+    @NoArgsConstructor
+    @Data
+    public static class FeaturesDTO {
+        private String type;
+        private String groupName;
+        private GeometryDTO geometry;
+        private PropertiesDTO properties;
+
+        @NoArgsConstructor
+        @Data
+        public static class GeometryDTO {
+            private String type;
+            private List<Double> coordinates;
+
+            public static GeometryDTO of() {
+                return new GeometryDTO();
+            }
+
+            public static GeometryDTO of(List<Double> coordinates) {
+                GeometryDTO of = of();
+                of.setCoordinates(coordinates);
+                return of;
+            }
+
+            public String getType() {
+                return Optional.ofNullable(type).orElse("Point");
+            }
+        }
+
+        @NoArgsConstructor
+        @Data
+        public static class PropertiesDTO {
+            private String title;
+            private List<String> description;
+            private List<String> permalink;
+            private String image;
+
+            public static PropertiesDTO of() {
+                return new PropertiesDTO();
+            }
+
+            public static PropertiesDTO of(String title, List<String> description, List<String> permalink, String image) {
+                PropertiesDTO of = of();
+                of.setTitle(title);
+                of.setDescription(description);
+                of.setPermalink(permalink);
+                of.setImage(image);
+
+                return of;
+            }
+        }
+
+        public static FeaturesDTO of() {
+            return new FeaturesDTO();
+        }
+
+        public static FeaturesDTO of(GeometryDTO geometry, PropertiesDTO properties) {
+            FeaturesDTO of = of();
+            of.setGeometry(geometry);
+            of.setProperties(properties);
+            return of;
+        }
+
+        public String getType() {
+            return Optional.ofNullable(type).orElse("Feature");
+        }
+
+        public static FeaturesDTO from(MapGroup group) {
+            if (Objects.isNull(group)) {
+                return FeaturesDTO.of();
+            }
+            log.info("=====from FeaturesDTO: {}", JsonUtils.objectToJson(group));
+            MapFeature.FeaturesDTO.GeometryDTO geometry = MapFeature.FeaturesDTO.GeometryDTO.of(Lists.newArrayList(StringUtils.split(group.getSpec().getCoordinates(), ',')).stream().filter(StringUtils::isNotBlank).map(Double::valueOf).collect(Collectors.toList()));
+            MapFeature.FeaturesDTO.PropertiesDTO properties = MapFeature.FeaturesDTO.PropertiesDTO.of(group.getSpec().getDisplayName(), Lists.newArrayList(), Lists.newArrayList(), null);
+            FeaturesDTO dto = of(geometry, properties);
+            dto.setGroupName(group.getMetadata().getName());
+            return dto;
+        }
+
+        public FeaturesDTO withProperties(List<MapVo> maps) {
+
+            log.info("=====withProperties maps: {}", JsonUtils.objectToJson(maps));
+
+            this.getProperties().setDescription(maps.stream().map(x -> x.getSpec().getDisplayName()).toList());
+            this.getProperties().setPermalink(maps.stream().map(x -> x.getSpec().getUrl()).toList());
+            this.getProperties().setImage(maps.stream().map(x -> x.getSpec().getLogo()).findFirst().orElse(null));
+            return this;
+        }
+
+        public FeaturesDTO withProperties(MapVo map) {
+
+            log.info("=====withProperties map: {}", JsonUtils.objectToJson(map));
+
+            this.getProperties().getDescription().add(map.getSpec().getDisplayName());
+            this.getProperties().getPermalink().add(map.getSpec().getUrl());
+            if (StringUtils.isNotBlank(map.getSpec().getLogo())) {
+                this.getProperties().setImage(map.getSpec().getLogo());
+            }
+            return this;
+        }
+    }
+
+    public String getType() {
+        return Optional.ofNullable(type).orElse("FeatureCollection");
+    }
+
+    public List<FeaturesDTO> getFeatures() {
+        return Optional.ofNullable(features).orElse(Collections.emptyList());
+    }
+
+    public static MapFeature of() {
+        return new MapFeature();
+    }
+
+    public static MapFeature of(List<FeaturesDTO> features) {
+        MapFeature of = of();
+        of.setFeatures(features);
+        return of;
+    }
+
+}

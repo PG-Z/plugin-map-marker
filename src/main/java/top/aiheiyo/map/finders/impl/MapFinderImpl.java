@@ -34,8 +34,7 @@ public class MapFinderImpl implements MapFinder {
 
     @Override
     public Flux<MapVo> listBy(String groupName) {
-        return listAll(map -> StringUtils.equals(map.getSpec().getGroupName(), groupName)
-                && map.getMetadata().getDeletionTimestamp() != null)
+        return listAll(map -> StringUtils.equals(map.getSpec().getGroupName(), groupName))
                 .map(MapVo::from);
     }
 
@@ -70,6 +69,7 @@ public class MapFinderImpl implements MapFinder {
         mapGroup.getMetadata().setName("ungrouped");
         mapGroup.setSpec(new MapGroup.MapGroupSpec());
         mapGroup.getSpec().setDisplayName("");
+        mapGroup.getSpec().setCoordinates("");
         mapGroup.getSpec().setPriority(0);
         return Mono.just(mapGroup);
     }
@@ -83,7 +83,7 @@ public class MapFinderImpl implements MapFinder {
                 .map(MapGroupVo::from);
     }
 
-    static Comparator<MapGroup> defaultGroupComparator() {
+    public static Comparator<MapGroup> defaultGroupComparator() {
         Function<MapGroup, Integer> priority = group -> group.getSpec().getPriority();
         Function<MapGroup, Instant> createTime =
                 group -> group.getMetadata().getCreationTimestamp();
@@ -93,7 +93,7 @@ public class MapFinderImpl implements MapFinder {
                 .thenComparing(name);
     }
 
-    static Comparator<Map> defaultMapComparator() {
+    public static Comparator<Map> defaultMapComparator() {
         Function<Map, Integer> priority = map -> map.getSpec().getPriority();
         Function<Map, Instant> createTime = map -> map.getMetadata().getCreationTimestamp();
         Function<Map, String> name = map -> map.getMetadata().getName();

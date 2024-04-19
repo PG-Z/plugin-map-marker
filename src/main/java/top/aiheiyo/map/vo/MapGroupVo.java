@@ -7,7 +7,9 @@ import run.halo.app.extension.MetadataOperator;
 import run.halo.app.theme.finders.vo.ExtensionVoOperator;
 import top.aiheiyo.map.MapGroup;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Description: mapGroup vo
@@ -31,5 +33,9 @@ public class MapGroupVo implements ExtensionVoOperator {
             .spec(mapGroup.getSpec())
             .links(List.of())
             .build();
+    }
+
+    public List<MapVo> getLinks() {
+        return Optional.ofNullable(links).orElse(Collections.emptyList());
     }
 }

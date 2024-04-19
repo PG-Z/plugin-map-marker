@@ -21,6 +21,7 @@ export interface MapGroupSpec {
 export interface MapSpec {
   url: string;
   displayName: string;
+  post: string;
   logo?: string;
   description?: string;
   priority?: number;
