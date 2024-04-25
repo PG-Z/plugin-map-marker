@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springdoc.webflux.core.fn.SpringdocRouteBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,7 @@ import reactor.core.publisher.Mono;
 import run.halo.app.core.extension.content.Post;
 import run.halo.app.extension.ListResult;
 import run.halo.app.extension.ReactiveExtensionClient;
+import run.halo.app.infra.utils.JsonUtils;
 import run.halo.app.plugin.ReactiveSettingFetcher;
 import top.aiheiyo.map.Map;
 import top.aiheiyo.map.finders.MapFinder;
@@ -33,6 +35,7 @@ import top.aiheiyo.map.vo.MapQuery;
  *
  * @author : evan  Date: 2024/4/25
  */
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class MapRouter {
@@ -80,6 +83,7 @@ public class MapRouter {
     }
 
     private Mono<ListResult<Map>> listMap(MapQuery query) {
+        log.info("========= listMap query: {}", JsonUtils.objectToJson(query));
         return client.list(Map.class, query.toPredicate(), query.toComparator(), query.getPage(), query.getSize())
                 .flatMap(result -> {
                     List<Map> maps = result.getItems();

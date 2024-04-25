@@ -17,4 +17,10 @@ public interface IMapService {
      */
     Flux<MapFeature.FeaturesDTO> mapFeature();
 
+    /**
+     * Description: syncMapSpec
+     *
+     * @author : evan  Date: 2024/4/25
+     */
+    void syncMapSpec();
 }

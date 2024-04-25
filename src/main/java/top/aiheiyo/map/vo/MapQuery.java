@@ -64,8 +64,6 @@ public class MapQuery  extends IListRequest.QueryListRequest {
             String keywordToSearch = keyword.trim().toLowerCase();
             return StringUtils.containsAnyIgnoreCase(map.getSpec().getDisplayName(),
                     keywordToSearch)
-                    || StringUtils.containsAnyIgnoreCase(map.getSpec().getDescription(),
-                    keywordToSearch)
                     || StringUtils.containsAnyIgnoreCase(map.getSpec().getUrl(), keywordToSearch);
         };
         Predicate<Map> groupPredicate = map -> {

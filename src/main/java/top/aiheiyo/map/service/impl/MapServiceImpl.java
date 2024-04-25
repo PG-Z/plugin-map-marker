@@ -3,6 +3,7 @@ package top.aiheiyo.map.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -42,7 +43,7 @@ public class MapServiceImpl implements IMapService {
                         .collectList()
                         .flatMap((maps) -> loadData(group, maps))
                         .defaultIfEmpty(group)
-                ).filter(group->group.valid());
+                ).filter(MapFeature.FeaturesDTO::valid);
     }
 
     private Mono<MapFeature.FeaturesDTO> loadData(MapFeature.FeaturesDTO group, List<MapVo> maps) {
@@ -61,6 +62,22 @@ public class MapServiceImpl implements IMapService {
     Flux<MapFeature.FeaturesDTO> groupOfFeature() {
         return client.list(MapGroup.class, null, defaultGroupComparator())
                 .map(MapFeature.FeaturesDTO::from);
+    }
+
+    @Async
+    @Override
+    public void syncMapSpec() {
+        try {
+            Flux<Map> mapFlux = client.list(Map.class, null, defaultMapComparator());
+            mapFlux.flatMap(map -> client.get(Post.class, map.getSpec().getPost())
+                            .map(post -> {
+                                map.getSpec().setDisplayName(post.getSpec().getTitle());
+                                map.getSpec().setUrl(post.getStatus().getPermalink());
+                                return map;
+                            }))
+                    .subscribe(client::update);
+        } catch (Exception ignored) {
+        }
     }
 
 }
