@@ -3,7 +3,6 @@ import "./styles/index.css";
 import { definePlugin } from "@halo-dev/console-shared";
 import MapList from "@/views/MapList.vue";
 import { markRaw } from "vue";
-import MdiBookMarkerOutline from "~icons/mdi/book-marker-outline";
 import MajesticonsMapMarkerPath from '~icons/majesticons/map-marker-path';
 
 export default definePlugin({

@@ -21,12 +21,11 @@ public class Map extends AbstractExtension {
 
     @Data
     public static class MapSpec {
-        @Schema(required = true)
         private String url;
 
-        @Schema(required = true)
         private String displayName;
 
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
         private String post;
 
         private String logo;

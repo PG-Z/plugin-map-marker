@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { Toast, VButton, VModal, VSpace } from "@halo-dev/components";
-import { inject, ref, computed, nextTick, watch, type Ref } from "vue";
+import {Toast, VButton, VModal, VSpace} from "@halo-dev/components";
+import {inject, ref, computed, nextTick, watch, type Ref} from "vue";
 import type {Map} from "@/types";
 import apiClient from "@/utils/api-client";
 import cloneDeep from "lodash.clonedeep";
@@ -91,8 +91,8 @@ const handleSaveLink = async () => {
   annotationsFormRef.value?.handleSubmit();
   await nextTick();
 
-  const { customAnnotations, annotations, customFormInvalid, specFormInvalid } =
-    annotationsFormRef.value || {};
+  const {customAnnotations, annotations, customFormInvalid, specFormInvalid} =
+  annotationsFormRef.value || {};
   if (customFormInvalid || specFormInvalid) {
     return;
   }
@@ -135,7 +135,7 @@ const handleSaveLink = async () => {
     @update:visible="onVisibleChange"
   >
     <template #actions>
-      <slot name="append-actions" />
+      <slot name="append-actions"/>
     </template>
 
     <FormKit
@@ -155,19 +155,12 @@ const handleSaveLink = async () => {
         </div>
         <div class="mt-5 divide-y divide-gray-100 md:col-span-3 md:mt-0">
           <FormKit
-            type="text"
-            name="displayName"
-            validation="required"
-            label="名称"
-          ></FormKit>
-          <FormKit
             type="postSelect"
             name="post"
             label="文章"
           ></FormKit>
-          <FormKit type="url" name="url" label="链接"></FormKit>
           <FormKit type="attachment" name="logo" label="Logo"></FormKit>
-          <FormKit type="textarea" name="description" label="描述"></FormKit>
+<!--          <FormKit type="textarea" name="description" label="描述"></FormKit>-->
         </div>
       </div>
     </FormKit>

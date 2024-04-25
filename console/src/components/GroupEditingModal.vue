@@ -141,7 +141,7 @@ watch(
           ></FormKit>
           <FormKit
             name="coordinates"
-            label="坐标系"
+            label="坐标系(lat,lon)"
             type="text"
             validation="required"
           ></FormKit>

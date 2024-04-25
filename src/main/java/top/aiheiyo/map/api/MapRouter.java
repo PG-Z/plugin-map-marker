@@ -5,6 +5,8 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 import static run.halo.app.extension.router.QueryParamBuildUtil.buildParametersFromType;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import org.springdoc.webflux.core.fn.SpringdocRouteBuilder;
@@ -14,7 +16,9 @@ import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import run.halo.app.core.extension.content.Post;
 import run.halo.app.extension.ListResult;
 import run.halo.app.extension.ReactiveExtensionClient;
 import run.halo.app.plugin.ReactiveSettingFetcher;
@@ -24,6 +28,11 @@ import top.aiheiyo.map.vo.MapConfig;
 import top.aiheiyo.map.vo.MapGroupVo;
 import top.aiheiyo.map.vo.MapQuery;
 
+/**
+ * Description: Router
+ *
+ * @author : evan  Date: 2024/4/25
+ */
 @Configuration
 @RequiredArgsConstructor
 public class MapRouter {
@@ -31,7 +40,7 @@ public class MapRouter {
     private final MapFinder mapFinder;
     private final ReactiveExtensionClient client;
     private final ReactiveSettingFetcher settingFetcher;
-    
+
     private final String tag = "api.plugin.aiheiyo.top/v1alpha1/Link";
 
     @Bean
@@ -71,12 +80,29 @@ public class MapRouter {
     }
 
     private Mono<ListResult<Map>> listMap(MapQuery query) {
-        return client.list(Map.class, query.toPredicate(),
-                query.toComparator(),
-                query.getPage(),
-                query.getSize()
-        );
+        return client.list(Map.class, query.toPredicate(), query.toComparator(), query.getPage(), query.getSize())
+                .flatMap(result -> {
+                    List<Map> maps = result.getItems();
+                    Flux<Post> postFlux = Flux.fromIterable(maps)
+                            .map(map -> map.getSpec().getPost())
+                            .distinct()
+                            .flatMap(postName -> client.list(Post.class, post -> post.getMetadata().getName().equals(postName), null).next());
+
+                    return postFlux.collectList()
+                            .map(posts -> {
+                                java.util.Map<String, Post> postMap = posts.stream().collect(Collectors.toMap(post -> post.getMetadata().getName(), post -> post));
+                                for (Map map : maps) {
+                                    Post post = postMap.get(map.getSpec().getPost());
+                                    if (Objects.nonNull(post)) {
+                                        map.getSpec().setDisplayName(post.getSpec().getTitle());
+                                        map.getSpec().setUrl(post.getStatus().getPermalink());
+                                    }
+                                }
+                                return result;
+                            });
+                });
     }
+
 
     private Mono<List<MapGroupVo>> mapGroups() {
         return mapFinder.groupBy()
@@ -85,21 +111,5 @@ public class MapRouter {
 
     private Mono<String> configs() {
         return this.settingFetcher.get("mapbox").map(MapConfig::ofStr);
-/*
-        return Mono.just("""
-                {
-                    "api": "https://slykiten.com/wp-json/",
-                    "nonce": "4fcad5daf3",
-                    "launguagePACK": "https://cdn.aifeel.top/home/js/mapbox-gl-rtl-text.js",
-                    "zoom": "1",
-                    "maxZoom": "7",
-                    "minZoom": "1",
-                    "limit": "9",
-                    "center": [
-                        "128.14",
-                        "33.87"
-                    ],
-                    "token": "pk.eyJ1IjoiZmF0ZXNpbmdlciIsImEiOiJjanc4bXFocG8wMXM1NDNxanB0MG5sa2ZpIn0.HqA5Q8Y4Jp1s3_TQ-sqVoQ"
-                }""");*/
     }
 }

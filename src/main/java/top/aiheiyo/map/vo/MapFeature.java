@@ -1,11 +1,12 @@
 package top.aiheiyo.map.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import run.halo.app.infra.utils.JsonUtils;
+import run.halo.app.core.extension.content.Post;
 import top.aiheiyo.map.MapGroup;
 
 import java.io.Serializable;
@@ -32,6 +33,7 @@ public class MapFeature implements Serializable {
     @Data
     public static class FeaturesDTO {
         private String type;
+        @JsonIgnore
         private String groupName;
         private GeometryDTO geometry;
         private PropertiesDTO properties;
@@ -99,7 +101,6 @@ public class MapFeature implements Serializable {
             if (Objects.isNull(group)) {
                 return FeaturesDTO.of();
             }
-            log.info("=====from FeaturesDTO: {}", JsonUtils.objectToJson(group));
             MapFeature.FeaturesDTO.GeometryDTO geometry = MapFeature.FeaturesDTO.GeometryDTO.of(Lists.newArrayList(StringUtils.split(group.getSpec().getCoordinates(), ',')).stream().filter(StringUtils::isNotBlank).map(Double::valueOf).collect(Collectors.toList()));
             MapFeature.FeaturesDTO.PropertiesDTO properties = MapFeature.FeaturesDTO.PropertiesDTO.of(group.getSpec().getDisplayName(), Lists.newArrayList(), Lists.newArrayList(), null);
             FeaturesDTO dto = of(geometry, properties);
@@ -107,27 +108,14 @@ public class MapFeature implements Serializable {
             return dto;
         }
 
-        public FeaturesDTO withProperties(List<MapVo> maps) {
-
-            log.info("=====withProperties maps: {}", JsonUtils.objectToJson(maps));
-
-            this.getProperties().setDescription(maps.stream().map(x -> x.getSpec().getDisplayName()).toList());
-            this.getProperties().setPermalink(maps.stream().map(x -> x.getSpec().getUrl()).toList());
-            this.getProperties().setImage(maps.stream().map(x -> x.getSpec().getLogo()).findFirst().orElse(null));
+        public FeaturesDTO propertiesWithPost(List<Post> posts, List<MapVo> maps) {
+            this.getProperties().setDescription(posts.stream().map(x -> x.getSpec().getTitle()).toList());
+            this.getProperties().setPermalink(posts.stream().map(x -> x.getStatus().getPermalink()).toList());
+            String image = posts.stream().map(x -> x.getSpec().getCover()).filter(StringUtils::isNotBlank).findFirst().orElse(maps.stream().map(map -> map.getSpec().getLogo()).filter(StringUtils::isNotBlank).findAny().orElse(null));
+            this.getProperties().setImage(image);
             return this;
         }
 
-        public FeaturesDTO withProperties(MapVo map) {
-
-            log.info("=====withProperties map: {}", JsonUtils.objectToJson(map));
-
-            this.getProperties().getDescription().add(map.getSpec().getDisplayName());
-            this.getProperties().getPermalink().add(map.getSpec().getUrl());
-            if (StringUtils.isNotBlank(map.getSpec().getLogo())) {
-                this.getProperties().setImage(map.getSpec().getLogo());
-            }
-            return this;
-        }
     }
 
     public String getType() {
