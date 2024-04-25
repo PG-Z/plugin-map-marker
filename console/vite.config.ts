@@ -1,18 +1,24 @@
-import { fileURLToPath, URL } from "url";
+import {fileURLToPath, URL} from "url";
 
-import { defineConfig } from "vite";
+import {defineConfig} from "vite";
 import Vue from "@vitejs/plugin-vue";
 import VueJsx from "@vitejs/plugin-vue-jsx";
 import Icons from "unplugin-icons/vite";
+import Components from 'unplugin-vue-components/vite'
+import IconsResolver from 'unplugin-icons/resolver'
 
-export default ({ mode }: { mode: string }) => {
+
+export default ({mode}: { mode: string }) => {
   const isProduction = mode === "production";
   const outDir = isProduction
     ? "../src/main/resources/console"
     : "../build/resources/main/console";
 
   return defineConfig({
-    plugins: [Vue(), VueJsx(), Icons({ compiler: "vue3" })],
+    plugins: [Vue(), VueJsx(), Components({resolvers: [IconsResolver({prefix: 'i'})]}), Icons({
+      compiler: "vue3",
+      autoInstall: true
+    })],
     resolve: {
       alias: {
         "@": fileURLToPath(new URL("./src", import.meta.url)),
