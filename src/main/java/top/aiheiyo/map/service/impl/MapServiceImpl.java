@@ -42,7 +42,7 @@ public class MapServiceImpl implements IMapService {
                         .collectList()
                         .flatMap((maps) -> loadData(group, maps))
                         .defaultIfEmpty(group)
-                );
+                ).filter(group->group.valid());
     }
 
     private Mono<MapFeature.FeaturesDTO> loadData(MapFeature.FeaturesDTO group, List<MapVo> maps) {

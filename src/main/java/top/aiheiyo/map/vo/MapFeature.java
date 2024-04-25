@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 import run.halo.app.core.extension.content.Post;
 import top.aiheiyo.map.MapGroup;
 
@@ -57,6 +58,14 @@ public class MapFeature implements Serializable {
             public String getType() {
                 return Optional.ofNullable(type).orElse("Point");
             }
+        }
+
+        public boolean valid() {
+            if (Objects.isNull(this.getProperties())) {
+                return false;
+            }
+
+            return !CollectionUtils.isEmpty(this.getProperties().getPermalink()) && !CollectionUtils.isEmpty(this.getProperties().getDescription());
         }
 
         @NoArgsConstructor
