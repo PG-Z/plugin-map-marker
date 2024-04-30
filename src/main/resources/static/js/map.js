@@ -194,10 +194,10 @@ var MYMAP = function () {
             var markerElement = this.createMarker();
             markerElement.className = "marker";
             markerElement.style.setProperty("--photo", "url(\"".concat(feature.properties.image, "\""));
-            var html = '<h3 class="markerPro--name">' + feature.properties.title + "</h3>";
-            if (feature.properties.permalink) {
+            var html = '<h3 class="marker--name">' + feature.properties.title + "</h3>";
+            if (feature.properties.permalink && feature.properties.permalink.length > 0) {
                 for (var i = feature.properties.permalink.length - 1; i >= 0; i--) {
-                    html += '<p class="markerPro--link"><a target="_blank" href="' + feature.properties.permalink[i] + '">' + feature.properties.description[i] + "</a></p>"
+                    html += '<p class="marker--link"><a target="_blank" href="' + feature.properties.permalink[i] + '">' + feature.properties.description[i] + "</a></p>"
                 }
             } else {
                 markerElement.classList.add("no-post");

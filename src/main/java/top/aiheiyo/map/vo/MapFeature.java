@@ -5,8 +5,10 @@ import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
+import org.thymeleaf.util.MapUtils;
 import run.halo.app.core.extension.content.Post;
 import top.aiheiyo.map.MapGroup;
 
@@ -36,6 +38,8 @@ public class MapFeature implements Serializable {
         private String type;
         @JsonIgnore
         private String groupName;
+        @JsonIgnore
+        private List<String> metas;
         private GeometryDTO geometry;
         private PropertiesDTO properties;
 
@@ -61,11 +65,22 @@ public class MapFeature implements Serializable {
         }
 
         public boolean valid() {
+
             if (Objects.isNull(this.getProperties())) {
                 return false;
             }
 
-            return !CollectionUtils.isEmpty(this.getProperties().getPermalink()) && !CollectionUtils.isEmpty(this.getProperties().getDescription());
+            boolean valid = !CollectionUtils.isEmpty(this.getProperties().getPermalink()) && !CollectionUtils.isEmpty(this.getProperties().getDescription());
+            if (!valid) {
+                // 已打为可展示标记跳过
+                if (this.getMetas().contains(Constant.Common.SHOW)) {
+                    this.getProperties().setNopost(true);
+                    this.getProperties().setImage(Constant.Common.DEFAULT_IMAGE);
+                    return true;
+                }
+            }
+
+            return valid;
         }
 
         @NoArgsConstructor
@@ -75,6 +90,11 @@ public class MapFeature implements Serializable {
             private List<String> description;
             private List<String> permalink;
             private String image;
+            private Boolean nopost;
+
+            public Boolean getNopost() {
+                return BooleanUtils.toBooleanDefaultIfNull(nopost, false);
+            }
 
             public static PropertiesDTO of() {
                 return new PropertiesDTO();
@@ -97,6 +117,7 @@ public class MapFeature implements Serializable {
 
         public static FeaturesDTO of(GeometryDTO geometry, PropertiesDTO properties) {
             FeaturesDTO of = of();
+            of.setMetas(Lists.newArrayList());
             of.setGeometry(geometry);
             of.setProperties(properties);
             return of;
@@ -114,6 +135,11 @@ public class MapFeature implements Serializable {
             MapFeature.FeaturesDTO.PropertiesDTO properties = MapFeature.FeaturesDTO.PropertiesDTO.of(group.getSpec().getDisplayName(), Lists.newArrayList(), Lists.newArrayList(), null);
             FeaturesDTO dto = of(geometry, properties);
             dto.setGroupName(group.getMetadata().getName());
+            if (!MapUtils.isEmpty(group.getMetadata().getAnnotations())) {
+                if (group.getMetadata().getAnnotations().containsKey(Constant.Common.SHOW)) {
+                    dto.getMetas().add(Constant.Common.SHOW);
+                }
+            }
             return dto;
         }
 

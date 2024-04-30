@@ -20,6 +20,10 @@ Halo 2.0 适配插件, 在地图上标记文章。
 <th:block th:replace="~{plugin:PluginMaps:map-marker :: marker()}" /></th:block>
 ```
 
+## 使用技巧
+
+- 创建分组未挂载文章时, 地图不会显示该分组. 但是在元数据新增: `key:show value:show`, 就会展示在地图上.
+
 ## 开发环境
 
 ```bash

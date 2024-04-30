@@ -156,6 +156,7 @@ const handleSaveLink = async () => {
         <div class="mt-5 divide-y divide-gray-100 md:col-span-3 md:mt-0">
           <FormKit
             type="postSelect"
+            validation="required"
             name="post"
             label="文章"
           ></FormKit>
