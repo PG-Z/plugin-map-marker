@@ -9,6 +9,7 @@ spec:
       formSchema:
         - $formkit: text
           label: Marker URL
+          help: 一般情况下使用的默认地址,无需修改
           name: api
           validation: required
           value: '/apis/api.plugin.halo.run/v1alpha1/plugins/PluginMaps/map/v1/mapFeature'
