@@ -16,5 +16,4 @@ spec:
   description: "在地图上标记文章"
   license:
     - name: "GPL-3.0"
-      url: "https://github.com/halo-sigs/plugin-links/blob/main/LICENSE"
   enabled: true
