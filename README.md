@@ -20,6 +20,41 @@ Halo 2.0 适配插件, 在地图上标记文章。
 <th:block th:replace="~{plugin:PluginMaps:map-marker :: marker()}" /></th:block>
 ```
 
+### 相关地点组件
+
+> 在文章详情页可以增加`相关地点`显示, 插件已提供html组件. 也可自定义, 已提供`Finder API` .
+
+```html
+<!--方法`marker-addon`传参的是文章唯一标识: `post.metadata.name`-->
+<th:block th:replace="~{plugin:PluginMaps:map-marker-append :: marker-addon(${post.metadata.name})}" />
+```
+
+**可以先判断插件状态: 已使用/并启用**
+```html
+<th:block th:if="${pluginFinder.available('PluginMaps')}">
+   <th:block th:replace="~{plugin:PluginMaps:map-marker-append :: marker-addon(${post.metadata.name})}" />
+</th:block>
+```
+
+**实际使用例子**
+- [引用适配](https://github.com/PG-Z/Summer-Cat/blob/main/templates/maps.html)
+- [相关地点](https://github.com/PG-Z/Summer-Cat/blob/main/templates/post.html)
+
+## Finder API
+
+**list(postName, page, size)**
+
+**描述**
+> 根据文章唯一标识获取文章关联地图标记分组下的其他文章。
+
+**参数**
+
+| 字段  |  描述 |
+| ------------ | ------------ |
+| postName  | 文章唯一标识  |
+| page | int - 分页页码，从 1 开始 |
+| size | int - 分页条数  |
+
 ## 使用技巧
 
 - 创建分组未挂载文章时, 地图不会显示该分组. 但是在元数据新增: `key:show value:show`, 就会展示在地图上.
