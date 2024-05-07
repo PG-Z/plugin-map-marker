@@ -3,7 +3,7 @@ kind: Plugin
 metadata:
   name: PluginMaps
 spec:
-  version: 1.0.1-beta.1
+  version: 1.0.1
   requires: ">=2.14.0"
   author:
     name: cat.7
