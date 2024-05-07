@@ -3,8 +3,11 @@ package top.aiheiyo.map;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.util.CollectionUtils;
 import run.halo.app.extension.AbstractExtension;
 import run.halo.app.extension.GVK;
+
+import java.util.List;
 
 /**
  * Description: map
@@ -34,10 +37,18 @@ public class Map extends AbstractExtension {
 
         private Integer priority;
 
+        @Schema(description = "map marker name")
         private String groupName;
     }
 
     public String groupName() {
         return this.getSpec().getGroupName();
+    }
+
+    public static String groupName(List<Map> maps) {
+        if (CollectionUtils.isEmpty(maps)) {
+            return null;
+        }
+        return maps.get(0).getSpec().getGroupName();
     }
 }

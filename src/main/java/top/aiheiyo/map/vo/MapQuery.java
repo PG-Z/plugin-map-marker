@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Sort;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.comparator.Comparators;
 import org.springframework.web.server.ServerWebExchange;
 import run.halo.app.core.extension.endpoint.SortResolver;
@@ -15,6 +16,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import static java.util.Comparator.comparing;
@@ -25,13 +27,17 @@ import static run.halo.app.extension.router.selector.SelectorUtil.labelAndFieldS
  *
  * @author : evan  Date: 2024/4/18
  */
-public class MapQuery  extends IListRequest.QueryListRequest {
+public class MapQuery extends IListRequest.QueryListRequest {
 
-    private final ServerWebExchange exchange;
+    private ServerWebExchange exchange;
 
     public MapQuery(ServerWebExchange exchange) {
         super(exchange.getRequest().getQueryParams());
         this.exchange = exchange;
+    }
+
+    public MapQuery(MultiValueMap<String, String> queryParams) {
+       super(queryParams);
     }
 
     @Schema(description = "Keyword to search maps under the group")
@@ -44,6 +50,11 @@ public class MapQuery  extends IListRequest.QueryListRequest {
         return queryParams.getFirst("groupName");
     }
 
+    @Schema(description = "post name")
+    public String getNotContainPost() {
+        return queryParams.getFirst("notContainPost");
+    }
+
     @ArraySchema(uniqueItems = true,
             arraySchema = @Schema(name = "sort",
                     description = "Sort property and direction of the list result. Supported fields: "
@@ -52,6 +63,9 @@ public class MapQuery  extends IListRequest.QueryListRequest {
                     implementation = String.class,
                     example = "creationTimestamp,desc"))
     public Sort getSort() {
+        if (Objects.isNull(this.exchange)) {
+            return Sort.by("status.lastModifyTime").descending();
+        }
         return SortResolver.defaultInstance.resolve(exchange);
     }
 
@@ -73,9 +87,17 @@ public class MapQuery  extends IListRequest.QueryListRequest {
             }
             return StringUtils.equals(groupName, map.getSpec().getGroupName());
         };
+
+        Predicate<Map> notContainPredicate = map -> {
+            var notContainPost = getNotContainPost();
+            if (StringUtils.isBlank(notContainPost)) {
+                return true;
+            }
+            return !StringUtils.equals(notContainPost, map.getSpec().getPost());
+        };
         Predicate<Extension> labelAndFieldSelectorToPredicate =
                 labelAndFieldSelectorToPredicate(getLabelSelector(), getFieldSelector());
-        return groupPredicate.and(keywordPredicate).and(labelAndFieldSelectorToPredicate);
+        return groupPredicate.and(keywordPredicate).and(labelAndFieldSelectorToPredicate).and(notContainPredicate);
     }
 
     public Comparator<Map> toComparator() {

@@ -5,20 +5,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import run.halo.app.core.extension.content.Post;
+import run.halo.app.extension.ListResult;
 import run.halo.app.extension.ReactiveExtensionClient;
 import top.aiheiyo.map.Map;
 import top.aiheiyo.map.MapGroup;
 import top.aiheiyo.map.service.IMapService;
-import top.aiheiyo.map.vo.MapFeature;
-import top.aiheiyo.map.vo.MapVo;
+import top.aiheiyo.map.service.helper.MarkerMapHelper;
+import top.aiheiyo.map.vo.*;
 
 import java.util.List;
+import java.util.Optional;
 
-import static top.aiheiyo.map.finders.impl.MapFinderImpl.defaultGroupComparator;
-import static top.aiheiyo.map.finders.impl.MapFinderImpl.defaultMapComparator;
+import static top.aiheiyo.map.service.helper.MarkerMapHelper.defaultGroupComparator;
+import static top.aiheiyo.map.service.helper.MarkerMapHelper.defaultMapComparator;
 
 /**
  * Description: map service 实现
@@ -31,6 +35,7 @@ import static top.aiheiyo.map.finders.impl.MapFinderImpl.defaultMapComparator;
 public class MapServiceImpl implements IMapService {
 
     private final ReactiveExtensionClient client;
+    private final MarkerMapHelper markerMapHelper;
 
     @Override
     public Flux<MapFeature.FeaturesDTO> mapFeature() {
@@ -80,4 +85,51 @@ public class MapServiceImpl implements IMapService {
         }
     }
 
+    @Override
+    public Mono<MapNearVO> nearMap(String post, Integer page, Integer size) {
+        if (StringUtils.isBlank(post)) {
+            return Mono.empty();
+        }
+
+        page = Optional.ofNullable(page).orElse(1);
+        size = Optional.ofNullable(size).orElse(3);
+
+        Integer finalPage = page;
+        Integer finalSize = size;
+        return client.list(Map.class, map -> StringUtils.equals(post, map.getSpec().getPost()), defaultMapComparator())
+                .collectList()
+                .flatMap(list -> {
+                    if (list.isEmpty()) {
+                        return Mono.empty();
+                    }
+                    String groupName = list.get(0).groupName();
+
+                    Mono<MapGroup> mapGroupMono = client.get(MapGroup.class, groupName);
+
+                    MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+                    queryParams.add("groupName", groupName);
+                    queryParams.add("notContainPost", post);
+                    queryParams.add("page", String.valueOf(finalPage));
+                    queryParams.add("size", String.valueOf(finalSize));
+                    return markerMapHelper.listMap(new MapQuery(queryParams))
+                            .flatMap(mapList -> Flux.fromStream(mapList.get())
+                                    .concatMap(this::getRelationPost)
+                                    .collectList()
+                                    .map(momentVos -> new ListResult<>(mapList.getPage(), mapList.getSize(),
+                                            mapList.getTotal(), momentVos)
+                                    )
+                            )
+                            .defaultIfEmpty(new ListResult<>(finalPage, finalSize, 0L, List.of()))
+                            .zipWith(mapGroupMono)
+                            .map(tuple -> {
+                                ListResult<Post> listResult = tuple.getT1();
+                                MapGroup mapGroup = tuple.getT2();
+                                return MapNearVO.of(mapGroup.getSpec().getDisplayName(), listResult);
+                            });
+                });
+    }
+
+    private Mono<Post> getRelationPost(Map map) {
+        return client.get(Post.class, map.getSpec().getPost());
+    }
 }

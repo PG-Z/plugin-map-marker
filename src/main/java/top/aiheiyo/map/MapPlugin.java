@@ -1,10 +1,10 @@
 package top.aiheiyo.map;
 
-import org.pf4j.PluginWrapper;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 import run.halo.app.extension.SchemeManager;
 import run.halo.app.plugin.BasePlugin;
+import run.halo.app.plugin.PluginContext;
 
 /**
  * Description: 启动
@@ -17,8 +17,8 @@ public class MapPlugin extends BasePlugin {
 
     private final SchemeManager schemeManager;
 
-    public MapPlugin(PluginWrapper wrapper, SchemeManager schemeManager) {
-        super(wrapper);
+    public MapPlugin(PluginContext context, SchemeManager schemeManager) {
+        super(context);
         this.schemeManager = schemeManager;
     }
 
