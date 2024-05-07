@@ -1,3 +1,6 @@
+import org.yaml.snakeyaml.DumperOptions
+import org.yaml.snakeyaml.Yaml
+
 plugins {
     id "com.github.node-gradle.node" version "5.0.0"
     id "io.freefair.lombok" version "8.0.1"
@@ -40,3 +43,28 @@ build {
     // build frontend before build
     tasks.getByName('compileJava').dependsOn('buildFrontend')
 }
+
+tasks.register('readYamlVersion') {
+    doLast {
+        def yamlFile = file('plugin.yaml')
+        def yaml = new Yaml().load(yamlFile.newInputStream())
+        def version = yaml.spec.version
+        println version
+    }
+}
+
+// 更新版本号
+tasks.register('updateVersion') {
+    doLast {
+        def yamlFile = file('src/main/resources/plugin.yaml')
+        def yaml = new Yaml().load(yamlFile.newInputStream())
+        yaml.spec.version = project.version
+        def newYaml = new DumperOptions()
+        newYaml.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK)
+        def yamlOutput = new Yaml(newYaml).dump(yaml)
+        yamlFile.write(yamlOutput)
+    }
+}
+// 构建之前先执行更新版本号的任务
+build.dependsOn updateVersion
+

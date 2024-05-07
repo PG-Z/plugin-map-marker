@@ -3,8 +3,8 @@ kind: Plugin
 metadata:
   name: PluginMaps
 spec:
-  version: 1.0.1
-  requires: ">=2.14.0"
+  version: 1.1.1-SNAPSHOT
+  requires: '>=2.14.0'
   author:
     name: cat.7
     website: https://github.com/PG-Z
@@ -12,8 +12,8 @@ spec:
   configMapName: plugin-map-marker-configmap
   settingName: plugin-map-marker-settings
   homepage: https://github.com/PG-Z/plugin-map-marker
-  displayName: "地图标记"
-  description: "在地图上标记文章"
+  displayName: 地图标记
+  description: 在地图上标记文章
   license:
-    - name: "GPL-3.0"
+  - name: GPL-3.0
   enabled: true
