@@ -2,8 +2,8 @@ package top.aiheiyo.map;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import run.halo.app.plugin.PluginContext;
 import run.halo.app.theme.dialect.TemplateHeadProcessor;
-import org.pf4j.PluginWrapper;
 import org.springframework.util.PropertyPlaceholderHelper;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.model.IModel;
@@ -24,20 +24,20 @@ public class MapProcessor implements TemplateHeadProcessor {
 
     static final PropertyPlaceholderHelper PROPERTY_PLACEHOLDER_HELPER = new PropertyPlaceholderHelper("${", "}");
 
-    private final PluginWrapper pluginWrapper;
+    private final PluginContext pluginContext;
 
     @Override
     public Mono<Void> process(ITemplateContext context, IModel model,
                               IElementModelStructureHandler structureHandler) {
         final IModelFactory modelFactory = context.getModelFactory();
-        model.add(modelFactory.createText(searchWidgetScript()));
+        model.add(modelFactory.createText(mapMarkerScript()));
         return Mono.empty();
     }
 
-    private String searchWidgetScript() {
+    private String mapMarkerScript() {
 
         final Properties properties = new Properties();
-        properties.setProperty("version", pluginWrapper.getDescriptor().getVersion());
+        properties.setProperty("version", pluginContext.getVersion());
 
         return PROPERTY_PLACEHOLDER_HELPER.replacePlaceholders("""
                 <!-- PluginMaps start -->
