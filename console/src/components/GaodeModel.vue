@@ -91,7 +91,7 @@ function initializeMap() {
       const mapInstance = new AMap.Map('container', {
         viewMode: '2D',
         zoom: 11,
-        center: [113.984358, 35.288668],
+        center: [103.951002, 30.564412],
         layers: [
           new AMap.TileLayer.RoadNet(),
           new AMap.TileLayer.WMS({
@@ -177,19 +177,63 @@ const copy = () => {
       <slot name="append-actions"/>
     </template>
 
-    <div>
-      <input style="width: 80%; height: 30px" v-model="mapData.keyword" @keydown.enter="search"/>
+    <div class="gaode-model">
+      <input style="width: 80%; height: 30px" v-model="mapData.keyword" @keydown.enter="search"
+             placeholder="输入地址 回车"/>
       <button @click="search">搜索</button>
-      <input style="width: 40%; height: 30px" v-model="mapLonLat.lat" readonly placeholder="纬度"/>
-      <input style="width: 40%; height: 30px" v-model="mapLonLat.lon" readonly placeholder="经度"/>
+      <input style="width: 40%; height: 30px" v-model="mapLonLat.lat" readonly placeholder="纬度(点击地图)"/>
+      <input style="width: 40%; height: 30px" v-model="mapLonLat.lon" readonly placeholder="经度(点击地图)"/>
       <button @click="copy">复制</button>
-      <div id="container" class="map" style="height: 400px; border-radius: 5px"></div>
+      <div id="container" class="map"></div>
     </div>
+
   </VModal>
 </template>
 
-<style scoped>
-.map {
+<style>
+.gaode-model div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.gaode-model input {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding: 5px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.gaode-model button {
+  margin-left: 15px;
+  width: 80px;
+  height: 30px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.gaode-model button:hover {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  background-color: #0056b3;
+}
+
+.gaode-model .map {
   width: 100%;
+  max-width: 600px;
+}
+
+.gaode-model #container {
+  margin-top: 10px;
+  width: 100%;
+  height: 400px;
+  border-radius: 5px;
 }
 </style>
