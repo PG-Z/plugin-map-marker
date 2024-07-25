@@ -48,3 +48,19 @@ spec:
           name: limit
           validation: required
           value: '9'
+    - group: gaode
+      label: 高德地图
+      formSchema:
+        - $formkit: text
+          label: Key
+          help: 高德开放平台(Web端类型 JS API)
+          name: key
+          validation: required
+          value: ''
+        - $formkit: text
+          label: 安全密钥
+          help: 高德开放平台((Web端类型 JS API)
+          name: securityJsCode
+          validation: required
+          value: ''
+

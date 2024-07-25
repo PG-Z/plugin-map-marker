@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { provide, ref, watch, type Ref } from "vue";
+import {provide, ref, watch, type Ref} from "vue";
 import Draggable from "vuedraggable";
 import {
   IconList,
@@ -28,11 +28,11 @@ import MapEditingModal from "../components/MapEditingModal.vue";
 import apiClient from "@/utils/api-client";
 import type {Map, MapGroup} from "@/types";
 import yaml from "yaml";
-import { useFileSystemAccess } from "@vueuse/core";
-import { formatDatetime } from "@/utils/date";
-import { useQueryClient } from "@tanstack/vue-query";
-import { useRouteQuery } from "@vueuse/router";
-import { useMapFetch, useMapGroupFetch } from "@/composables/use-map";
+import {useFileSystemAccess} from "@vueuse/core";
+import {formatDatetime} from "@/utils/date";
+import {useQueryClient} from "@tanstack/vue-query";
+import {useRouteQuery} from "@vueuse/router";
+import {useMapFetch, useMapGroupFetch} from "@/composables/use-map";
 import cloneDeep from "lodash.clonedeep";
 import RiLinksLine from "~icons/ri/links-line";
 
@@ -44,6 +44,8 @@ const selectedLinks = ref<string[]>([]);
 const editingModal = ref(false);
 const checkedAll = ref(false);
 
+const showMapModal = ref(false);
+
 const groupQuery = useRouteQuery<string>("group");
 provide<Ref<string>>("groupQuery", groupQuery);
 
@@ -51,7 +53,7 @@ const page = ref(1);
 const size = ref(20);
 const keyword = ref("");
 
-const { links, isLoading, total, refetch } = useMapFetch(
+const {links, isLoading, total, refetch} = useMapFetch(
   page,
   size,
   keyword,
@@ -158,7 +160,7 @@ const handleDelete = (link: Map) => {
       } catch (e) {
         console.error(e);
       } finally {
-        queryClient.invalidateQueries({ queryKey: ["links"] });
+        queryClient.invalidateQueries({queryKey: ["links"]});
       }
     },
   });
@@ -185,7 +187,7 @@ const handleDeleteInBatch = () => {
       } catch (e) {
         console.error(e);
       } finally {
-        queryClient.invalidateQueries({ queryKey: ["links"] });
+        queryClient.invalidateQueries({queryKey: ["links"]});
       }
     },
   });
@@ -203,7 +205,7 @@ const handleExportSelectedLinks = async () => {
     })
     .filter((link) => link)
     .join("---\n");
-  const blob = new Blob([yamlString], { type: "text/yaml" });
+  const blob = new Blob([yamlString], {type: "text/yaml"});
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
@@ -246,12 +248,12 @@ const handleImportFromYaml = async () => {
   } catch (e) {
     console.error(e);
   } finally {
-    queryClient.invalidateQueries({ queryKey: ["links"] });
+    queryClient.invalidateQueries({queryKey: ["links"]});
   }
 };
 
 const handleCheckAllChange = (e: Event) => {
-  const { checked } = e.target as HTMLInputElement;
+  const {checked} = e.target as HTMLInputElement;
   checkedAll.value = checked;
   if (checkedAll.value) {
     selectedLinks.value =
@@ -268,7 +270,7 @@ watch(selectedLinks, (newValue) => {
 });
 
 // groups
-const { groups } = useMapGroupFetch();
+const {groups} = useMapGroupFetch();
 
 function getGroup(groupName: string) {
   return groups.value?.find((group) => group.metadata.name === groupName);
@@ -329,21 +331,27 @@ async function handleMove(link: Map, group: MapGroup) {
   >
     <template #append-actions>
       <span @click="handleSelectPrevious">
-        <IconArrowLeft />
+        <IconArrowLeft/>
       </span>
       <span @click="handleSelectNext">
-        <IconArrowRight />
+        <IconArrowRight/>
       </span>
     </template>
   </MapEditingModal>
+
+  <GaodeModel
+    v-model:visible="showMapModal"
+  >
+  </GaodeModel>
+
   <VPageHeader title="地图标记">
     <template #icon>
-      <RiLinksLine class="links-mr-2 links-self-center" />
+      <RiLinksLine class="links-mr-2 links-self-center"/>
     </template>
     <template #actions>
       <VSpace v-permission="['plugin:maps:manage']">
-        <VButton size="sm" type="default" @click="handleImportFromYaml">
-          导入
+        <VButton size="sm" type="default" @click="showMapModal = true">
+          地图解析
         </VButton>
       </VSpace>
     </template>
@@ -351,7 +359,7 @@ async function handleMove(link: Map, group: MapGroup) {
   <div class="links-p-4">
     <div class="links-flex links-flex-row links-gap-2">
       <div class="links-w-96">
-        <GroupList />
+        <GroupList/>
       </div>
       <div class="links-flex-1">
         <VCard :body-class="['!p-0']">
@@ -389,9 +397,9 @@ async function handleMove(link: Map, group: MapGroup) {
                         <VDropdownItem @click="handleExportSelectedLinks">
                           导出
                         </VDropdownItem>
-                        <VDropdownDivider />
+                        <VDropdownDivider/>
                         <VDropdown placement="right" :triggers="['click']">
-                          <VDropdownItem> 移动 </VDropdownItem>
+                          <VDropdownItem> 移动</VDropdownItem>
                           <template #popper>
                             <template
                               v-for="group in groups"
@@ -422,7 +430,7 @@ async function handleMove(link: Map, group: MapGroup) {
               </div>
             </div>
           </template>
-          <VLoading v-if="isLoading" />
+          <VLoading v-if="isLoading"/>
           <Transition v-else-if="!links?.length" appear name="fade">
             <VEmpty message="你可以尝试刷新或者新建地图标记" title="当前没有地图标记">
               <template #actions>
@@ -434,7 +442,7 @@ async function handleMove(link: Map, group: MapGroup) {
                     @click="editingModal = true"
                   >
                     <template #icon>
-                      <IconAddCircle class="h-full w-full" />
+                      <IconAddCircle class="h-full w-full"/>
                     </template>
                     新建
                   </VButton>
@@ -464,7 +472,7 @@ async function handleMove(link: Map, group: MapGroup) {
                       <div
                         class="drag-element links-absolute links-inset-y-0 links-left-0 links-hidden links-w-3.5 links-cursor-move links-items-center links-bg-gray-100 links-transition-all hover:links-bg-gray-200 group-hover:links-flex"
                       >
-                        <IconList class="h-3.5 w-3.5" />
+                        <IconList class="h-3.5 w-3.5"/>
                       </div>
                     </template>
 
@@ -529,7 +537,7 @@ async function handleMove(link: Map, group: MapGroup) {
                         编辑
                       </VDropdownItem>
                       <VDropdown placement="left" :triggers="['click']">
-                        <VDropdownItem> 移动 </VDropdownItem>
+                        <VDropdownItem> 移动</VDropdownItem>
                         <template #popper>
                           <template
                             v-for="group in groups"

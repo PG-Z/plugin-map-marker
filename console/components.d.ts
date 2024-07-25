@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    GaodeModel: typeof import('./src/components/GaodeModel.vue')['default']
     GroupEditingModal: typeof import('./src/components/GroupEditingModal.vue')['default']
     GroupList: typeof import('./src/components/GroupList.vue')['default']
     MapEditingModal: typeof import('./src/components/MapEditingModal.vue')['default']

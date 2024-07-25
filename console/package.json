@@ -12,6 +12,8 @@
     "prettier": "prettier --write './src/**/*.{vue,js,jsx,ts,tsx,css,scss,json,yml,yaml,html}'"
   },
   "dependencies": {
+    "@amap/amap-jsapi-loader": "^1.0.1",
+    "@halo-dev/api-client": "^2.17.0",
     "@halo-dev/components": "^1.7.0",
     "@halo-dev/console-shared": "^2.8.0",
     "@tanstack/vue-query": "^4.32.0",
