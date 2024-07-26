@@ -180,10 +180,11 @@ const copy = () => {
     <div class="gaode-model">
       <input style="width: 80%; height: 30px" v-model="mapData.keyword" @keydown.enter="search"
              placeholder="输入地址 回车"/>
-      <button @click="search">搜索</button>
-      <input style="width: 40%; height: 30px" v-model="mapLonLat.lat" readonly placeholder="纬度(点击地图)"/>
-      <input style="width: 40%; height: 30px" v-model="mapLonLat.lon" readonly placeholder="经度(点击地图)"/>
-      <button @click="copy">复制</button>
+      <button style="width: 10%" @click="search">搜索</button>
+      <input style="width: 37%; height: 30px" v-model="mapLonLat.lat" readonly placeholder="纬度(点击地图)"/>
+      <span style="margin-left: 3%;margin-right: 3%; height: 30px"></span>
+      <input style="width: 37%; height: 30px" v-model="mapLonLat.lon" readonly placeholder="经度(点击地图)"/>
+      <button style="width: 10%" @click="copy">复制</button>
       <div id="container" class="map"></div>
     </div>
 
