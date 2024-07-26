@@ -209,7 +209,7 @@ const copy = () => {
 }
 
 .gaode-model button {
-  margin-left: 15px;
+  margin-left: 7%;
   width: 80px;
   height: 30px;
   font-size: 14px;
