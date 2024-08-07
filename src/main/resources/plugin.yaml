@@ -3,7 +3,8 @@ kind: Plugin
 metadata:
   name: PluginMaps
 spec:
-  version: 1.2.1
+  enabled: true
+  version: 1.2.2-alpha.1
   requires: '>=2.14.0'
   author:
     name: cat.7
@@ -16,4 +17,3 @@ spec:
   description: 在地图上标记文章
   license:
   - name: GPL-3.0
-  enabled: true
