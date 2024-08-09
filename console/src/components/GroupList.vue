@@ -15,7 +15,7 @@ import GroupEditingModal from "./GroupEditingModal.vue";
 import type {MapGroup, MapList} from "@/types";
 import { inject, ref, watch, type Ref } from "vue";
 import Draggable from "vuedraggable";
-import apiClient from "@/utils/api-client";
+import { axiosInstance } from "@halo-dev/api-client";
 import { useMapGroupFetch } from "@/composables/use-map";
 import cloneDeep from "lodash.clonedeep";
 
@@ -48,7 +48,7 @@ const onPriorityChange = async () => {
       if (group.spec) {
         group.spec.priority = index;
       }
-      return apiClient.put(
+      return axiosInstance.put(
         `/apis/map.aiheiyo.top/v1alpha1/mapgroups/${group.metadata.name}`,
         group
       );
@@ -70,11 +70,11 @@ const handleDelete = async (group: MapGroup) => {
     confirmType: "danger",
     onConfirm: async () => {
       try {
-        await apiClient.delete(
+        await axiosInstance.delete(
           `/apis/map.aiheiyo.top/v1alpha1/mapgroups/${group.metadata.name}`
         );
 
-        const { data } = await apiClient.get<MapList>(
+        const { data } = await axiosInstance.get<MapList>(
           `/apis/api.plugin.aiheiyo.top/v1alpha1/plugins/PluginMaps/maps`,
           {
             params: {
@@ -86,7 +86,7 @@ const handleDelete = async (group: MapGroup) => {
         );
 
         const deleteLinkPromises = data.items.map((link) =>
-          apiClient.delete(
+          axiosInstance.delete(
             `/apis/map.aiheiyo.top/v1alpha1/maps/${link.metadata.name}`
           )
         );

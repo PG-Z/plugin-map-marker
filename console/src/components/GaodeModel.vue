@@ -156,7 +156,7 @@ const search = () => {
 };
 
 const copy = () => {
-  const lonLat = `${mapLonLat.lat},${mapLonLat.lon}`;
+  const lonLat = `${mapLonLat.lon},${mapLonLat.lat}`;
   navigator.clipboard.writeText(lonLat).then(() => {
     console.log('经纬度已复制:', lonLat);
   }).catch(err => {

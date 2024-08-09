@@ -25,7 +25,7 @@ import {
 } from "@halo-dev/components";
 import GroupList from "../components/GroupList.vue";
 import MapEditingModal from "../components/MapEditingModal.vue";
-import apiClient from "@/utils/api-client";
+import { axiosInstance } from "@halo-dev/api-client";
 import type {Map, MapGroup} from "@/types";
 import yaml from "yaml";
 import {useFileSystemAccess} from "@vueuse/core";
@@ -125,7 +125,7 @@ const onPriorityChange = async () => {
       if (link.spec) {
         link.spec.priority = index;
       }
-      return apiClient.put(
+      return axiosInstance.put(
         `/apis/map.aiheiyo.top/v1alpha1/maps/${link.metadata.name}`,
         link
       );
@@ -152,7 +152,7 @@ const handleDelete = (link: Map) => {
     confirmType: "danger",
     onConfirm: async () => {
       try {
-        await apiClient.delete(
+        await axiosInstance.delete(
           `/apis/map.aiheiyo.top/v1alpha1/maps/${link.metadata.name}`
         );
 
@@ -174,7 +174,7 @@ const handleDeleteInBatch = () => {
     onConfirm: async () => {
       try {
         const promises = selectedLinks.value.map((link) => {
-          return apiClient.delete(`/apis/map.aiheiyo.top/v1alpha1/maps/${link}`);
+          return axiosInstance.delete(`/apis/map.aiheiyo.top/v1alpha1/maps/${link}`);
         });
         if (promises) {
           await Promise.all(promises);
@@ -237,13 +237,13 @@ const handleImportFromYaml = async () => {
     const parsed = yaml.parseAllDocuments(res.data.value);
     if (Array.isArray(parsed)) {
       const promises = parsed.map((link) => {
-        return apiClient.post("/apis/map.aiheiyo.top/v1alpha1/maps", link);
+        return axiosInstance.post("/apis/map.aiheiyo.top/v1alpha1/maps", link);
       });
       if (promises) {
         await Promise.all(promises);
       }
     } else {
-      await apiClient.post("/apis/map.aiheiyo.top/v1alpha1/maps", parsed);
+      await axiosInstance.post("/apis/map.aiheiyo.top/v1alpha1/maps", parsed);
     }
   } catch (e) {
     console.error(e);
@@ -284,7 +284,7 @@ async function handleMoveInBatch(group: MapGroup) {
     .filter(Boolean) as Map[];
 
   const requests = linksToUpdate.map((link) => {
-    return apiClient.put<Map>(
+    return axiosInstance.put<Map>(
       `/apis/map.aiheiyo.top/v1alpha1/maps/${link?.metadata.name}`,
       {
         ...link,
@@ -307,7 +307,7 @@ async function handleMoveInBatch(group: MapGroup) {
 }
 
 async function handleMove(link: Map, group: MapGroup) {
-  await apiClient.put<Map>(
+  await axiosInstance.put<Map>(
     `/apis/map.aiheiyo.top/v1alpha1/maps/${link.metadata.name}`,
     {
       ...link,

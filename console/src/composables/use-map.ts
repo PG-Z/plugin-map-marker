@@ -1,5 +1,5 @@
 import type {MapGroup, MapList, MapGroupList} from "@/types";
-import apiClient from "@/utils/api-client";
+import { axiosInstance } from "@halo-dev/api-client";
 import { useQuery } from "@tanstack/vue-query";
 import { ref, type Ref } from "vue";
 
@@ -18,7 +18,7 @@ export function useMapFetch(
   } = useQuery({
     queryKey: ["links", page, size, group, keyword],
     queryFn: async () => {
-      const { data } = await apiClient.get<MapList>(
+      const { data } = await axiosInstance.get<MapList>(
         "/apis/api.plugin.aiheiyo.top/v1alpha1/plugins/PluginMaps/maps",
         {
           params: {
@@ -60,7 +60,7 @@ export function useMapGroupFetch() {
   } = useQuery<MapGroup[]>({
     queryKey: ["link-groups"],
     queryFn: async () => {
-      const { data } = await apiClient.get<MapGroupList>(
+      const { data } = await axiosInstance.get<MapGroupList>(
         "/apis/map.aiheiyo.top/v1alpha1/mapgroups"
       );
 

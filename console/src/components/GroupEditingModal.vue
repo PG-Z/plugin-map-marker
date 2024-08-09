@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Toast, VButton, VModal, VSpace } from "@halo-dev/components";
 import { computed, nextTick, ref, watch } from "vue";
-import apiClient from "@/utils/api-client";
+import { axiosInstance } from "@halo-dev/api-client";
 import cloneDeep from "lodash.clonedeep";
 import type { MapGroup } from "@/types";
 
@@ -67,12 +67,12 @@ const handleCreateOrUpdateGroup = async () => {
   try {
     saving.value = true;
     if (isUpdateMode.value) {
-      await apiClient.put(
+      await axiosInstance.put(
         `/apis/map.aiheiyo.top/v1alpha1/mapgroups/${formState.value.metadata.name}`,
         formState.value
       );
     } else {
-      await apiClient.post(
+      await axiosInstance.post(
         "/apis/map.aiheiyo.top/v1alpha1/mapgroups",
         formState.value
       );

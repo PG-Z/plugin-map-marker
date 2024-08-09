@@ -2,7 +2,7 @@
 import {Toast, VButton, VModal, VSpace} from "@halo-dev/components";
 import {inject, ref, computed, nextTick, watch, type Ref} from "vue";
 import type {Map} from "@/types";
-import apiClient from "@/utils/api-client";
+import { axiosInstance } from "@halo-dev/api-client";
 import cloneDeep from "lodash.clonedeep";
 
 const props = withDefaults(
@@ -105,13 +105,13 @@ const handleSaveLink = async () => {
   try {
     saving.value = true;
     if (isUpdateMode.value) {
-      await apiClient.put<Map>(
+      await axiosInstance.put<Map>(
         `/apis/map.aiheiyo.top/v1alpha1/maps/${formState.value.metadata.name}`,
         formState.value
       );
     } else {
       formState.value.spec.groupName = groupQuery.value;
-      await apiClient.post<Map>(
+      await axiosInstance.post<Map>(
         `/apis/map.aiheiyo.top/v1alpha1/maps`,
         formState.value
       );
