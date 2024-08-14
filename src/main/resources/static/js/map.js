@@ -1,4 +1,5 @@
 let MAP_MARKER;
+
 function _createForOfIteratorHelper(o, allowArrayLike) {
     var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"];
     if (!it) {
@@ -237,17 +238,20 @@ var MYMAP = function () {
     return MYMAP
 }();
 
-jQuery(document).ready(function () {
-    let selector = document.querySelector("#map");
-    if (selector == null) {
-        return;
-    }
-
-    let configStr = document.getElementById('map-marker-config').innerText;
-    MAP_MARKER = JSON.parse(configStr);
-    fetch(MAP_MARKER.api).then(function (response) {
-        return response.json().then(function (json) {
-            new MYMAP({data: json})
+if (typeof jQuery === 'undefined') {
+    console.debug('jQuery is not defined. Please ensure jQuery is loaded before map.js.');
+} else {
+    jQuery(document).ready(function () {
+        let selector = document.querySelector("#map");
+        if (selector == null) {
+            return;
+        }
+        let configStr = document.getElementById('map-marker-config').innerText;
+        MAP_MARKER = JSON.parse(configStr);
+        fetch(MAP_MARKER.api).then(function (response) {
+            return response.json().then(function (json) {
+                new MYMAP({data: json})
+            })
         })
-    })
-});
+    });
+}

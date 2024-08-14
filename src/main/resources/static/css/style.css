@@ -80,8 +80,6 @@
 .mapboxgl-ctrl {
     clear: both;
     pointer-events: auto;
-
-    /* workaround for a Safari bug https://github.com/mapbox/mapbox-gl-js/issues/8185 */
     transform: translate(0, 0);
 }
 
@@ -632,6 +630,10 @@ a.mapboxgl-ctrl-logo.mapboxgl-compact {
     border: 2px solid #fff;
 }
 
+#mapMarker{
+    width: 100%;
+}
+
 .no-post.marker {
     background: linear-gradient(180deg, #89a9cd 0, #485f81);
 }
@@ -736,7 +738,7 @@ a.mapboxgl-ctrl-logo.mapboxgl-compact {
 .footer-map-note {
     font-size: 14px;
     color: rgba(0, 0, 0, 0.56);
-    margin-bottom: 100px;
+    margin-bottom: 15px;
 }
 
 .mapbox-gl-draw_polygon {

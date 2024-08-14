@@ -41,8 +41,8 @@ public class MapProcessor implements TemplateHeadProcessor {
 
         return PROPERTY_PLACEHOLDER_HELPER.replacePlaceholders("""
                 <!-- PluginMaps start -->
-                <script src="/plugins/PluginMaps/assets/static/js/map.js?version=${version}" async></script>
-                <script src="/plugins/PluginMaps/assets/static/js/mappack.js?version=${version}" async></script>
+                <script src="/plugins/PluginMaps/assets/static/js/map.js?version=${version}" defer async></script>
+                <script src="/plugins/PluginMaps/assets/static/js/mappack.js?version=${version}" defer async></script>
                 <link rel="stylesheet" href="/plugins/PluginMaps/assets/static/css/style.css?version=${version}" />
                 <!-- PluginMaps end -->
                 """, properties);
