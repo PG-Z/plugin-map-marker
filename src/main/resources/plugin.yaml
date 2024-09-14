@@ -4,7 +4,7 @@ metadata:
   name: PluginMaps
 spec:
   enabled: true
-  version: 1.2.2-alpha.5
+  version: 1.2.2
   requires: '>=2.14.0'
   author:
     name: cat.7
