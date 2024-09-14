@@ -13,7 +13,7 @@ Halo 2.0 适配插件, 在地图上标记文章。
         <img src="https://img.shields.io/github/release-date/PG-Z/plugin-map-marker?color=95E1D3&amp;label=release date&amp;logo=puppet&amp;logoColor=95E1D3&amp;style=for-the-badge" referrerpolicy="no-referrer" alt="release-date" />
     </a>
     <img src="https://img.shields.io/github/last-commit/PG-Z/plugin-map-marker?style=for-the-badge&amp;logo=lospec&amp;logoColor=a6d189" referrerpolicy="no-referrer" alt="last-commit" />
-    <a href="/"><img src="https://img.shields.io/badge/halo-%3E=2.14.0-8caaee?style=for-the-badge&amp;logo=hexo&amp;logoColor=8caaee" referrerpolicy="no-referrer" alt="Required Halo version" /></a>
+    <a href="/"><img src="https://img.shields.io/badge/halo-%3E=2.17.0-8caaee?style=for-the-badge&amp;logo=hexo&amp;logoColor=8caaee" referrerpolicy="no-referrer" alt="Required Halo version" /></a>
 </p>
 
 ## 使用方式
